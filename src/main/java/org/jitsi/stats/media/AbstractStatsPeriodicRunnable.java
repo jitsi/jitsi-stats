@@ -295,28 +295,6 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     }
 
     /**
-     * Utility method to update <tt>resultStats</tt> Map, for the key id with
-     * the newStats which is collection of type T.
-     * @param resultStats the map to update
-     * @param id the id to use when adding the new stats.
-     * @param newStats the new stats to add.
-     * @param <T> type of the stats.
-     */
-    protected static <T extends Collection> void updateResults(
-        Map<String, T> resultStats, String id, T newStats)
-    {
-        T previousResults = resultStats.get(id);
-        if (previousResults != null)
-        {
-            previousResults.addAll(newStats);
-        }
-        else
-        {
-            resultStats.put(id, newStats);
-        }
-    }
-
-    /**
      * Listener that get notified when conference had been processed
      * by callstats and we have the identifier for it and we can start sending
      * stats for it.
