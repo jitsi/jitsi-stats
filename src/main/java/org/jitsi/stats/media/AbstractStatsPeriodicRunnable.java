@@ -178,21 +178,18 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                         .fractionalPacketLost(receiveStat.getLossRate())
                         .ssrc(String.valueOf(receiveStat.getSSRC()))
                         .confID(this.conferenceID)
-                        .localUserID(endpointID)
-                        .remoteUserID(this.initiatorID)
+                        .localUserID(this.initiatorID)
+                        .remoteUserID(endpointID)
                         .statsType(CallStatsStreamType.INBOUND)
-                        .jitter(receiveStat.getJitter())
-                        .rtt((int) receiveStat.getRtt())
                         .ucID(userInfo.getUcID());
 
-                    // TODO(damencho): do we want to publish not set values???
-                    /*if (receiveStat.getJitter() != TrackStats.JITTER_UNSET)
+                    if (receiveStat.getJitter() != TrackStats.JITTER_UNSET)
                         conferenceStats
                             = conferenceStats.jitter(receiveStat.getJitter());
 
                     if (receiveStat.getRtt() != -1)
                         conferenceStats
-                            = conferenceStats.rtt((int) receiveStat.getRtt());*/
+                            = conferenceStats.rtt((int) receiveStat.getRtt());
 
                     callStats.reportConferenceStats(
                         endpointID, conferenceStats.build());
@@ -228,21 +225,18 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                         .fractionalPacketLost(sendStat.getLossRate())
                         .ssrc(String.valueOf(sendStat.getSSRC()))
                         .confID(this.conferenceID)
-                        .localUserID(endpointID)
-                        .remoteUserID(this.initiatorID)
+                        .localUserID(this.initiatorID)
+                        .remoteUserID(endpointID)
                         .statsType(CallStatsStreamType.OUTBOUND)
-                        .jitter(sendStat.getJitter())
-                        .rtt((int) sendStat.getRtt())
                         .ucID(userInfo.getUcID());
 
-                    // TODO(damencho): do we want to publish not set values???
-                    /*if (sendStat.getJitter() != TrackStats.JITTER_UNSET)
+                    if (sendStat.getJitter() != TrackStats.JITTER_UNSET)
                         conferenceStats
                             = conferenceStats.jitter(sendStat.getJitter());
 
                     if (sendStat.getRtt() != -1)
                         conferenceStats
-                            = conferenceStats.rtt((int) sendStat.getRtt());*/
+                            = conferenceStats.rtt((int) sendStat.getRtt());
 
                     callStats.reportConferenceStats(
                         endpointID, conferenceStats.build());
