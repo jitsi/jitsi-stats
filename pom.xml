@@ -17,6 +17,10 @@
     <name>jitsi-stats</name>
     <url>https://github.com/jitsi/jitsi-stats</url>
 
+    <properties>
+        <jitsi-desktop.version>2.13.77e7a10</jitsi-desktop.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.callstats</groupId>
@@ -31,6 +35,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jitsi-util</artifactId>
+            <version>${jitsi-desktop.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
