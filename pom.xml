@@ -18,14 +18,14 @@
     <url>https://github.com/jitsi/jitsi-stats</url>
 
     <properties>
-        <jitsi-desktop.version>2.13.77e7a10</jitsi-desktop.version>
+        <jitsi-desktop.version>2.13.dbdabb3</jitsi-desktop.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.callstats</groupId>
             <artifactId>callstats-java-sdk</artifactId>
-            <version>4.1.4</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
