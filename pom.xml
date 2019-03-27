@@ -13,7 +13,7 @@
     <url>https://github.com/jitsi/jitsi-stats</url>
 
     <properties>
-        <jitsi-desktop.version>2.13.dbdabb3</jitsi-desktop.version>
+        <jitsi-desktop.version>2.13.b3295da</jitsi-desktop.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>libjitsi</artifactId>
-            <version>1.0-20170927.165735-317</version>
+            <version>1.0-20190327.162716-379</version>
         </dependency>
     </dependencies>
 
