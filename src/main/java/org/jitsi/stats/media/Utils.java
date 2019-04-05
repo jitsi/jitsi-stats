@@ -16,7 +16,7 @@
 package org.jitsi.stats.media;
 
 import org.jitsi.service.configuration.*;
-import org.jitsi.util.*;
+import org.jitsi.utils.*;
 
 import java.io.*;
 import java.util.*;

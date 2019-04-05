@@ -21,7 +21,7 @@ import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
 import net.java.sip.communicator.util.*;
 import org.jitsi.service.neomedia.stats.*;
-import org.jitsi.util.concurrent.*;
+import org.jitsi.utils.concurrent.*;
 
 import java.lang.ref.*;
 import java.util.*;
