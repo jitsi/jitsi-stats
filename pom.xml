@@ -13,7 +13,7 @@
     <url>https://github.com/jitsi/jitsi-stats</url>
 
     <properties>
-        <jitsi-desktop.version>2.13.b3295da</jitsi-desktop.version>
+        <jitsi-desktop.version>2.13.2bc6ccf</jitsi-desktop.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
