@@ -20,6 +20,7 @@ import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
 import net.java.sip.communicator.util.*;
 import org.jitsi.service.version.*;
+import org.jitsi.utils.logging.Logger;
 import org.osgi.framework.*;
 
 import java.util.*;

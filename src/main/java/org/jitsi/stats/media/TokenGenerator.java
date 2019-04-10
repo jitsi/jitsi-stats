@@ -24,7 +24,7 @@ import org.jose4j.jws.*;
 import org.jose4j.jwt.*;
 import org.jose4j.lang.*;
 
-import net.java.sip.communicator.util.*;
+import org.jitsi.utils.logging.*;
 
 import java.io.*;
 import java.lang.reflect.*;
