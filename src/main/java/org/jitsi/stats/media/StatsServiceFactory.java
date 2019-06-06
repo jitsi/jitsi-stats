@@ -17,6 +17,7 @@ package org.jitsi.stats.media;
 
 import io.callstats.sdk.*;
 import io.callstats.sdk.data.*;
+import io.callstats.sdk.internal.*;
 import io.callstats.sdk.listeners.*;
 import net.java.sip.communicator.util.*;
 import org.jitsi.service.version.*;
@@ -99,6 +100,8 @@ public class StatsServiceFactory
      * @param keyId ID of the key that was used to generate token.
      * @param keyPath The path to private key file.
      * @param initiatorID The initiator id to report to callstats.io.
+     * @param isClient The initiator will be reporting client connection (jigasi)
+     * not server one (jvb).
      */
     public synchronized void createStatsService(
         BundleContext context,
@@ -106,7 +109,8 @@ public class StatsServiceFactory
         String appSecret,
         String keyId,
         String keyPath,
-        String initiatorID)
+        String initiatorID,
+        boolean isClient)
     {
         createStatsService(
             context,
@@ -115,16 +119,11 @@ public class StatsServiceFactory
             keyId,
             keyPath,
             initiatorID,
-            new InitErrorCallback()
-            {
-                @Override
-                public void errorCallback(String reason, String errorMsg)
-                {
-                    logger.error("callstats.io Java library failed to "
-                        + "initialize with error: " + reason
-                        + " and error message: " + errorMsg);
-                }
-            }
+            isClient,
+            (reason, errorMsg)
+                -> logger.error("callstats.io Java library failed to "
+                    + "initialize with error: " + reason
+                    + " and error message: " + errorMsg)
         );
     }
 
@@ -137,6 +136,8 @@ public class StatsServiceFactory
      * @param keyId ID of the key that was used to generate token.
      * @param keyPath The path to private key file.
      * @param initiatorID The initiator id to report to callstats.io.
+     * @param isClient The initiator will be reporting client connection (jigasi)
+     * not server one (jvb).
      * @param errorCallback error callback to be notified if callstats.io failed
      * to initialize.
      */
@@ -147,6 +148,7 @@ public class StatsServiceFactory
         String keyId,
         String keyPath,
         String initiatorID,
+        boolean isClient,
         final InitErrorCallback errorCallback)
     {
         if (callStatsInstances.containsKey(id))
@@ -167,7 +169,7 @@ public class StatsServiceFactory
             }
         }
 
-        ServerInfo serverInfo = createServerInfo(context);
+        ServerInfo serverInfo = createServerInfo(context, isClient);
 
         final CallStats callStats = new CallStats();
 
@@ -246,9 +248,13 @@ public class StatsServiceFactory
      *
      * @param bundleContext the {@code BundleContext} in which the method is
      * invoked
+     * @param isClient The initiator will be reporting client connection (jigasi)
+     * not server one (jvb).
      * @return a new {@code ServerInfo} instance
      */
-    private ServerInfo createServerInfo(BundleContext bundleContext)
+    private ServerInfo createServerInfo(
+        BundleContext bundleContext,
+        boolean isClient)
     {
         ServerInfo serverInfo = new ServerInfo();
 
@@ -269,6 +275,16 @@ public class StatsServiceFactory
             // ver
             serverInfo.setVer(version.toString());
         }
+
+        // the default endpoint type is server (middlebox)
+        String endpointType = CallStatsConst.END_POINT_TYPE;
+
+        if (isClient)
+        {
+            endpointType = "browser";
+        }
+
+        serverInfo.setEndpointType(endpointType);
 
         return serverInfo;
     }
