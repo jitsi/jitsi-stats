@@ -20,7 +20,8 @@ import io.callstats.sdk.data.*;
 import io.callstats.sdk.internal.*;
 import io.callstats.sdk.listeners.*;
 import net.java.sip.communicator.util.*;
-import org.jitsi.service.version.*;
+import org.jitsi.utils.version.*;
+import org.jitsi.utils.version.Version;
 import org.jitsi.utils.logging.Logger;
 import org.osgi.framework.*;
 
@@ -267,8 +268,7 @@ public class StatsServiceFactory
 
         if (versionService != null)
         {
-            org.jitsi.service.version.Version version
-                = versionService.getCurrentVersion();
+            Version version = versionService.getCurrentVersion();
 
             // name
             serverInfo.setName(version.getApplicationName());
