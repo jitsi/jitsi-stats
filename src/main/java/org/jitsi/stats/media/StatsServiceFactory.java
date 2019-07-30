@@ -19,7 +19,6 @@ import io.callstats.sdk.*;
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.internal.*;
 import io.callstats.sdk.listeners.*;
-import net.java.sip.communicator.util.*;
 import org.jitsi.utils.version.*;
 import org.jitsi.utils.version.Version;
 import org.jitsi.utils.logging.Logger;
@@ -263,8 +262,13 @@ public class StatsServiceFactory
         serverInfo.setOs(System.getProperty("os.name"));
 
         // name & ver
+        ServiceReference<VersionService> serviceReference
+            = bundleContext == null
+                ? null : bundleContext.getServiceReference(VersionService.class);
+
         VersionService versionService
-            = ServiceUtils.getService(bundleContext, VersionService.class);
+            = (serviceReference == null)
+                ? null : bundleContext.getService(serviceReference);
 
         if (versionService != null)
         {
