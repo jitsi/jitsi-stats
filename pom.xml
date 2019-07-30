@@ -13,7 +13,6 @@
     <url>https://github.com/jitsi/jitsi-stats</url>
 
     <properties>
-        <jitsi-desktop.version>2.13.1f9891e</jitsi-desktop.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -29,11 +28,6 @@
             <version>4.3.1</version>
         </dependency>
         <!-- org.jitsi -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jitsi-util</artifactId>
-            <version>${jitsi-desktop.version}</version>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jitsi-utils</artifactId>
