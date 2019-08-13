@@ -19,7 +19,6 @@ import io.callstats.sdk.*;
 
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
-import org.jitsi.service.neomedia.stats.*;
 import org.jitsi.utils.concurrent.*;
 import org.jitsi.utils.logging.*;
 
@@ -99,22 +98,9 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     }
 
     /**
-     * Retrieves all the receive track statistics to be reported,
-     * grouped by endpoint.
-     *
-     * @return Map of ReceiveTrackStats by endpointID.
+     * Retrieves stats for all endpoints.
      */
-    protected abstract Map<String, Collection<? extends ReceiveTrackStats>>
-        getReceiveTrackStats();
-
-    /**
-     * Retrieves all the send track statistics to be reported,
-     * grouped by endpoint.
-     *
-     * @return Map of SendTrackStats by endpointID.
-     */
-    protected abstract Map<String, Collection<? extends SendTrackStats>>
-        getSendTrackStats();
+    protected abstract List<EndpointStats> getEndpointStats();
 
     @Override
     protected void doRun()
@@ -128,122 +114,90 @@ public abstract class AbstractStatsPeriodicRunnable<T>
             return;
         }
 
-        // retrieve the receive and send statistics that we will send
-        Map<String, Collection<? extends ReceiveTrackStats>> receiveStats
-            = getReceiveTrackStats();
-        Map<String, Collection<? extends SendTrackStats>> sendStats
-            = getSendTrackStats();
-
-        // get all endointIDs available for reporting
-        Set<String> combinedEndpoints
-            = new HashSet<>(receiveStats.keySet());
-        combinedEndpoints.addAll(sendStats.keySet());
-
-        for (String endpointID : combinedEndpoints)
+        for (EndpointStats endpointStats : getEndpointStats())
         {
+            String endpointId = endpointStats.getEndpointId();
             callStats.startStatsReportingForUser(
-                endpointID,
+                endpointId,
                 this.conferenceID);
 
-            Collection<? extends ReceiveTrackStats> receiveTrackStats
-                = receiveStats.get(endpointID);
-            if (receiveTrackStats != null)
+            for (SsrcStats receiveStat : endpointStats.getReceiveStats())
             {
-                for (ReceiveTrackStats receiveStat : receiveTrackStats)
+                if (logger.isDebugEnabled())
                 {
-                    if (logger.isDebugEnabled())
-                    {
-                        logger.debug(new StringBuilder()
-                            .append("ReceiveTrackStats (")
-                            .append(this.initiatorID)
-                            .append(" <- ").append(endpointID).append(") :")
-                            .append(" ssrc: ").append(receiveStat.getSSRC())
-                            .append(", bytes:").append(receiveStat.getBytes())
-                            .append(", packets:")
-                                .append(receiveStat.getPackets())
-                            .append(", packetsLost:")
-                                .append(receiveStat.getPacketsLost())
-                            .append(", lostRate:")
-                                .append(receiveStat.getLossRate())
-                            .append(", jitter:").append(receiveStat.getJitter())
-                            .append(", rtt:").append(receiveStat.getRtt())
-                        );
-                    }
+                    logger.debug(new StringBuilder()
+                        .append("Receive stats (")
+                        .append(this.initiatorID)
+                        .append(" <- ").append(endpointId).append(") :")
+                        .append(receiveStat.toString()));
+                }
 
-                    ConferenceStatsBuilder conferenceStats
-                        = new ConferenceStatsBuilder()
-                        .bytesReceived(receiveStat.getBytes())
-                        .packetsReceived(receiveStat.getPackets())
-                        .packetsLost(receiveStat.getPacketsLost())
-                        .fractionalPacketLost(receiveStat.getLossRate())
-                        .ssrc(String.valueOf(receiveStat.getSSRC()))
+                ConferenceStatsBuilder conferenceStats
+                    = new ConferenceStatsBuilder()
+                        .bytesReceived(receiveStat.bytes)
+                        .packetsReceived(receiveStat.packets)
+                        .packetsLost(receiveStat.packetsLost)
+                        .fractionalPacketLost(receiveStat.fractionalPacketLoss)
+                        .ssrc(String.valueOf(receiveStat.ssrc))
                         .confID(this.conferenceID)
                         .localUserID(this.initiatorID)
-                        .remoteUserID(endpointID)
+                        .remoteUserID(endpointId)
                         .statsType(CallStatsStreamType.INBOUND)
                         .ucID(userInfo.getUcID());
 
-                    if (receiveStat.getJitter() != TrackStats.JITTER_UNSET)
-                        conferenceStats
-                            = conferenceStats.jitter(receiveStat.getJitter());
-
-                    if (receiveStat.getRtt() != -1)
-                        conferenceStats
-                            = conferenceStats.rtt((int) receiveStat.getRtt());
-
-                    callStats.reportConferenceStats(
-                        endpointID, conferenceStats.build());
+                if (receiveStat.jitter_ms != null)
+                {
+                    conferenceStats
+                            = conferenceStats.jitter(receiveStat.jitter_ms);
                 }
+
+                if (receiveStat.rtt_ms > 0)
+                {
+                    conferenceStats = conferenceStats.rtt(receiveStat.rtt_ms);
+                }
+
+                callStats.reportConferenceStats(
+                    endpointId, conferenceStats.build());
             }
 
-            Collection<? extends SendTrackStats> sendTrackStats
-                = sendStats.get(endpointID);
-            if (sendTrackStats != null)
+            for (SsrcStats sendStat : endpointStats.getSendStats())
             {
-                for (SendTrackStats sendStat : sendTrackStats)
+                if (logger.isDebugEnabled())
                 {
-                    if (logger.isDebugEnabled())
-                    {
-                        logger.debug(new StringBuilder()
-                            .append("SendTrackStats (")
-                            .append(this.initiatorID)
-                            .append(" -> ").append(endpointID).append(") :")
-                            .append(" ssrc: ").append(sendStat.getSSRC())
-                            .append(", bytes:").append(sendStat.getBytes())
-                            .append(", packets:").append(sendStat.getPackets())
-                            .append(", lostRate:")
-                                .append(sendStat.getLossRate())
-                            .append(", jitter:").append(sendStat.getJitter())
-                            .append(", rtt:").append(sendStat.getRtt())
-                        );
-                    }
+                    logger.debug(new StringBuilder()
+                        .append("Send stats (")
+                        .append(this.initiatorID)
+                        .append(" -> ").append(endpointId).append(") :")
+                        .append(sendStat.toString()));
+                }
 
-                    ConferenceStatsBuilder conferenceStats
-                        = new ConferenceStatsBuilder()
-                        .bytesSent(sendStat.getBytes())
-                        .packetsSent(sendStat.getPackets())
-                        .fractionalPacketLost(sendStat.getLossRate())
-                        .ssrc(String.valueOf(sendStat.getSSRC()))
+                ConferenceStatsBuilder conferenceStats
+                    = new ConferenceStatsBuilder()
+                        .bytesSent(sendStat.bytes)
+                        .packetsSent(sendStat.packets)
+                        .fractionalPacketLost(sendStat.fractionalPacketLoss)
+                        .ssrc(String.valueOf(sendStat.ssrc))
                         .confID(this.conferenceID)
                         .localUserID(this.initiatorID)
-                        .remoteUserID(endpointID)
+                        .remoteUserID(endpointId)
                         .statsType(CallStatsStreamType.OUTBOUND)
                         .ucID(userInfo.getUcID());
 
-                    if (sendStat.getJitter() != TrackStats.JITTER_UNSET)
-                        conferenceStats
-                            = conferenceStats.jitter(sendStat.getJitter());
-
-                    if (sendStat.getRtt() != -1)
-                        conferenceStats
-                            = conferenceStats.rtt((int) sendStat.getRtt());
-
-                    callStats.reportConferenceStats(
-                        endpointID, conferenceStats.build());
+                if (sendStat.jitter_ms != null)
+                {
+                    conferenceStats = conferenceStats.jitter(sendStat.jitter_ms);
                 }
+
+                if (sendStat.rtt_ms > 0)
+                {
+                    conferenceStats = conferenceStats.rtt(sendStat.rtt_ms);
+                }
+
+                callStats.reportConferenceStats(
+                    endpointId, conferenceStats.build());
             }
 
-            callStats.stopStatsReportingForUser(endpointID, this.conferenceID);
+            callStats.stopStatsReportingForUser(endpointId, this.conferenceID);
         }
     }
 
