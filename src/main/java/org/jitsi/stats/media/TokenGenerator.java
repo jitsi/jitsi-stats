@@ -18,7 +18,6 @@ package org.jitsi.stats.media;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 import io.callstats.sdk.*;
-import org.bouncycastle.util.encoders.*;
 import org.jose4j.jwk.*;
 import org.jose4j.jws.*;
 import org.jose4j.jwt.*;
@@ -125,15 +124,11 @@ public class TokenGenerator
                JoseException
     {
         Type mapType = new TypeToken<Map<String, String>>(){}.getType();
-        Map<String, String> son = new Gson().fromJson(
-            new FileReader(keyPath), mapType);
+        Map<String, String> son
+                = new Gson().fromJson(new FileReader(keyPath), mapType);
 
         EllipticCurveJsonWebKey jwk
             = new EllipticCurveJsonWebKey((Map<String, Object>)(Map)son);
-        Base64Encoder enc = new Base64Encoder();
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte[] encodedKey = jwk.getPrivateKey().getEncoded();
-        enc.encode(encodedKey, 0, encodedKey.length, os);
         return jwk.getPrivateKey();
     }
 }
