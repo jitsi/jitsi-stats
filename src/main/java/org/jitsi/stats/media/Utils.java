@@ -15,7 +15,6 @@
  */
 package org.jitsi.stats.media;
 
-import org.jitsi.service.configuration.*;
 import org.jitsi.utils.*;
 
 import java.io.*;
@@ -82,12 +81,13 @@ public class Utils
         // SC_HOME_DIR_LOCATION/SC_HOME_DIR_NAME because that is a directory
         // known to Jitsi-derived projects.
         String scHomeDirName
-            = System.getProperty(ConfigurationService.PNAME_SC_HOME_DIR_NAME);
+            = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_NAME");
 
         if (!StringUtils.isNullOrEmpty(scHomeDirName))
         {
-            String scHomeDirLocation = System.getProperty(
-                ConfigurationService.PNAME_SC_HOME_DIR_LOCATION);
+            String scHomeDirLocation
+                = System.getProperty(
+                        "net.java.sip.communicator.SC_HOME_DIR_LOCATION");
 
             if (!StringUtils.isNullOrEmpty(scHomeDirLocation))
             {
