@@ -19,8 +19,12 @@ import io.callstats.sdk.*;
 
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
+import org.jitsi.utils.*;
 import org.jitsi.utils.concurrent.*;
 import org.jitsi.utils.logging.*;
+import org.jxmpp.jid.*;
+import org.jxmpp.jid.impl.*;
+import org.jxmpp.stringprep.*;
 
 import java.lang.ref.*;
 import java.util.*;
@@ -55,6 +59,12 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     private String initiatorID;
 
     /**
+     * The site id which identifies the current initiator.
+     * If there is no site id, default value is '/'.
+     */
+    private String initiatorSiteID = "/";
+
+    /**
      * The conference ID to use when reporting stats.
      */
     private final String conferenceID;
@@ -70,7 +80,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
      * @param o the conference/call used to report statistics.
      * @param period the reporting interval.
      * @param statsService the stats service that will be serving this reporting
-     * @param conferenceName the conference name.
+     * @param conferenceJid the conference jid.
      * @param conferenceIDPrefix the conference prefix.
      * @param initiatorID the initiator.
      */
@@ -78,7 +88,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
         T o,
         long period,
         StatsService statsService,
-        String conferenceName,
+        String conferenceJid,
         String conferenceIDPrefix,
         String initiatorID)
     {
@@ -86,15 +96,53 @@ public abstract class AbstractStatsPeriodicRunnable<T>
         this.statsService = statsService;
         this.initiatorID = initiatorID;
 
-        if (conferenceIDPrefix != null
-            && !conferenceIDPrefix.endsWith("/"))
+        StringBuilder conferenceIDBuilder = new StringBuilder();
+
+        if (conferenceIDPrefix != null)
         {
-            conferenceIDPrefix += "/";
+            conferenceIDBuilder.append(conferenceIDPrefix);
+            if(!conferenceIDPrefix.endsWith("/"))
+            {
+                conferenceIDBuilder.append("/");
+            }
         }
 
-        this.conferenceID =
-            (conferenceIDPrefix != null ? conferenceIDPrefix : "")
-                + conferenceName;
+        try
+        {
+            EntityBareJid roomJid = JidCreate.entityBareFrom(conferenceJid);
+
+            String conferenceName = roomJid.getLocalpart().toString();
+
+            // extract siteId/subdomain
+            String domain = roomJid.getDomain().toString();
+            if (conferenceIDPrefix != null
+                && domain.endsWith("." + conferenceIDPrefix))
+            {
+                // strip `.conferenceIDPrefix`
+                String mucDomain = domain.substring(0, domain.indexOf(conferenceIDPrefix) - 1);
+                int dotIx = mucDomain.indexOf('.');
+                if (dotIx > 0)
+                {
+                    String siteId = mucDomain.substring(dotIx + 1);
+
+                    if (!StringUtils.isNullOrEmpty(siteId))
+                    {
+                        this.initiatorSiteID = siteId;
+                        conferenceIDBuilder.append(siteId).append("/");
+                    }
+                }
+            }
+
+            conferenceIDBuilder.append(conferenceName);
+        }
+        catch(XmppStringprepException e)
+        {
+            logger.warn("Cannot parse conference jid:" + conferenceJid);
+
+            conferenceIDBuilder.append(conferenceJid);
+        }
+
+        this.conferenceID = conferenceIDBuilder.toString();
     }
 
     /**
@@ -208,8 +256,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
      */
     public void start()
     {
-        ConferenceInfo conferenceInfo
-            = new ConferenceInfo(this.conferenceID, this.initiatorID);
+        ConferenceInfo conferenceInfo = new ConferenceInfo(this.conferenceID, this.initiatorID, this.initiatorSiteID);
 
         // Send setup event to callstats and on successful response create
         // the userInfo object.
