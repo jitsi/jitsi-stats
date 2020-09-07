@@ -22,11 +22,6 @@
             <artifactId>callstats-java-sdk</artifactId>
             <version>5.2.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.3.1</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.jxmpp/jxmpp-jid -->
         <dependency>
             <groupId>org.jxmpp</groupId>

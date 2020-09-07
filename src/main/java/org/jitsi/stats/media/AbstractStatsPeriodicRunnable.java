@@ -56,7 +56,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     /**
      * The id which identifies the current initiator.
      */
-    private String initiatorID;
+    private final String initiatorID;
 
     /**
      * The site id which identifies the current initiator.
@@ -72,7 +72,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     /**
      * The stats service to use for periodic reports.
      */
-    private StatsService statsService;
+    private final StatsService statsService;
 
     /**
      * Constructs <tt>AbstractStatsPeriodicRunnable</tt>.
@@ -143,6 +143,15 @@ public abstract class AbstractStatsPeriodicRunnable<T>
         }
 
         this.conferenceID = conferenceIDBuilder.toString();
+    }
+
+    /**
+     * Returns the StatsService instance.
+     * @return the StatsService instance.
+     */
+    public StatsService getStatsService()
+    {
+        return this.statsService;
     }
 
     /**
@@ -277,6 +286,8 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                 CallStatsConferenceEvents.CONFERENCE_TERMINATED,
                 userInfo);
         }
+
+        StatsServiceFactory.getInstance().stopStatsService(this.statsService.getId());
     }
 
     /**
