@@ -81,14 +81,14 @@ public abstract class AbstractStatsPeriodicRunnable<T>
      * @param period the reporting interval.
      * @param statsService the stats service that will be serving this reporting
      * @param conferenceJid the conference jid.
-     * @param conferenceIDPrefix the conference prefix.
+     * @param conferenceIDPrefix the conference prefix, this is the domain of the deployment.
      * @param initiatorID the initiator.
      */
     public AbstractStatsPeriodicRunnable(
         T o,
         long period,
         StatsService statsService,
-        String conferenceJid,
+        EntityBareJid conferenceJid,
         String conferenceIDPrefix,
         String initiatorID)
     {
@@ -107,40 +107,29 @@ public abstract class AbstractStatsPeriodicRunnable<T>
             }
         }
 
-        try
+        String conferenceName = conferenceJid.getLocalpart().toString();
+
+        // extract siteId/subdomain
+        String domain = conferenceJid.getDomain().toString();
+        if (conferenceIDPrefix != null
+            && domain.endsWith("." + conferenceIDPrefix))
         {
-            EntityBareJid roomJid = JidCreate.entityBareFrom(conferenceJid);
-
-            String conferenceName = roomJid.getLocalpart().toString();
-
-            // extract siteId/subdomain
-            String domain = roomJid.getDomain().toString();
-            if (conferenceIDPrefix != null
-                && domain.endsWith("." + conferenceIDPrefix))
+            // strip `.conferenceIDPrefix`
+            String mucDomain = domain.substring(0, domain.indexOf(conferenceIDPrefix) - 1);
+            int dotIx = mucDomain.indexOf('.');
+            if (dotIx > 0)
             {
-                // strip `.conferenceIDPrefix`
-                String mucDomain = domain.substring(0, domain.indexOf(conferenceIDPrefix) - 1);
-                int dotIx = mucDomain.indexOf('.');
-                if (dotIx > 0)
-                {
-                    String siteId = mucDomain.substring(dotIx + 1);
+                String siteId = mucDomain.substring(dotIx + 1);
 
-                    if (!StringUtils.isNullOrEmpty(siteId))
-                    {
-                        this.initiatorSiteID = siteId;
-                        conferenceIDBuilder.append(siteId).append("/");
-                    }
+                if (!StringUtils.isNullOrEmpty(siteId))
+                {
+                    this.initiatorSiteID = siteId;
+                    conferenceIDBuilder.append(siteId).append("/");
                 }
             }
-
-            conferenceIDBuilder.append(conferenceName);
         }
-        catch(XmppStringprepException e)
-        {
-            logger.warn("Cannot parse conference jid:" + conferenceJid);
 
-            conferenceIDBuilder.append(conferenceJid);
-        }
+        conferenceIDBuilder.append(conferenceName);
 
         this.conferenceID = conferenceIDBuilder.toString();
     }
