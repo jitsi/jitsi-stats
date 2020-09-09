@@ -19,15 +19,14 @@ import io.callstats.sdk.*;
 
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
-import org.jitsi.utils.*;
 import org.jitsi.utils.concurrent.*;
 import org.jitsi.utils.logging.*;
 import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-import org.jxmpp.stringprep.*;
 
 import java.lang.ref.*;
 import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Implements a {@link RecurringRunnable} which periodically generates a
@@ -105,31 +104,29 @@ public abstract class AbstractStatsPeriodicRunnable<T>
             {
                 conferenceIDBuilder.append("/");
             }
-        }
 
-        String conferenceName = conferenceJid.getLocalpart().toString();
-
-        // extract siteId/subdomain
-        String domain = conferenceJid.getDomain().toString();
-        if (conferenceIDPrefix != null
-            && domain.endsWith("." + conferenceIDPrefix))
-        {
-            // strip `.conferenceIDPrefix`
-            String mucDomain = domain.substring(0, domain.indexOf(conferenceIDPrefix) - 1);
-            int dotIx = mucDomain.indexOf('.');
-            if (dotIx > 0)
+            // extract siteId/subdomain
+            String domain = conferenceJid.getDomain().toString();
+            if (domain.endsWith("." + conferenceIDPrefix))
             {
-                String siteId = mucDomain.substring(dotIx + 1);
+                // strip `.conferenceIDPrefix`
+                String mucDomain = domain.substring(0, domain.length() - conferenceIDPrefix.length() - 1);
 
-                if (!StringUtils.isNullOrEmpty(siteId))
+                int dotIx = mucDomain.indexOf('.');
+                if (dotIx > 0)
                 {
-                    this.initiatorSiteID = siteId;
-                    conferenceIDBuilder.append(siteId).append("/");
+                    String siteId = mucDomain.substring(dotIx + 1);
+
+                    if (!isNotBlank(siteId))
+                    {
+                        this.initiatorSiteID = siteId;
+                        conferenceIDBuilder.append(siteId).append("/");
+                    }
                 }
             }
         }
 
-        conferenceIDBuilder.append(conferenceName);
+        conferenceIDBuilder.append(conferenceJid.getLocalpart().toString());
 
         this.conferenceID = conferenceIDBuilder.toString();
     }
