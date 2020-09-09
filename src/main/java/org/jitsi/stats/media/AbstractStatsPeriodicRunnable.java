@@ -21,9 +21,12 @@ import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
 import org.jitsi.utils.concurrent.*;
 import org.jitsi.utils.logging.*;
+import org.jxmpp.jid.*;
 
 import java.lang.ref.*;
 import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Implements a {@link RecurringRunnable} which periodically generates a
@@ -52,7 +55,13 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     /**
      * The id which identifies the current initiator.
      */
-    private String initiatorID;
+    private final String initiatorID;
+
+    /**
+     * The site id which identifies the current initiator.
+     * If there is no site id, default value is '/'.
+     */
+    private String initiatorSiteID = "/";
 
     /**
      * The conference ID to use when reporting stats.
@@ -62,7 +71,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     /**
      * The stats service to use for periodic reports.
      */
-    private StatsService statsService;
+    private final StatsService statsService;
 
     /**
      * Constructs <tt>AbstractStatsPeriodicRunnable</tt>.
@@ -70,15 +79,15 @@ public abstract class AbstractStatsPeriodicRunnable<T>
      * @param o the conference/call used to report statistics.
      * @param period the reporting interval.
      * @param statsService the stats service that will be serving this reporting
-     * @param conferenceName the conference name.
-     * @param conferenceIDPrefix the conference prefix.
+     * @param conferenceJid the conference jid.
+     * @param conferenceIDPrefix the conference prefix, this is the domain of the deployment.
      * @param initiatorID the initiator.
      */
     public AbstractStatsPeriodicRunnable(
         T o,
         long period,
         StatsService statsService,
-        String conferenceName,
+        EntityBareJid conferenceJid,
         String conferenceIDPrefix,
         String initiatorID)
     {
@@ -86,15 +95,49 @@ public abstract class AbstractStatsPeriodicRunnable<T>
         this.statsService = statsService;
         this.initiatorID = initiatorID;
 
-        if (conferenceIDPrefix != null
-            && !conferenceIDPrefix.endsWith("/"))
+        StringBuilder conferenceIDBuilder = new StringBuilder();
+
+        if (conferenceIDPrefix != null)
         {
-            conferenceIDPrefix += "/";
+            conferenceIDBuilder.append(conferenceIDPrefix);
+            if(!conferenceIDPrefix.endsWith("/"))
+            {
+                conferenceIDBuilder.append("/");
+            }
+
+            // extract siteId/subdomain
+            String domain = conferenceJid.getDomain().toString();
+            if (domain.endsWith("." + conferenceIDPrefix))
+            {
+                // strip `.conferenceIDPrefix`
+                String mucDomain = domain.substring(0, domain.length() - conferenceIDPrefix.length() - 1);
+
+                int dotIx = mucDomain.indexOf('.');
+                if (dotIx > 0)
+                {
+                    String siteId = mucDomain.substring(dotIx + 1);
+
+                    if (isNotBlank(siteId))
+                    {
+                        this.initiatorSiteID = siteId;
+                        conferenceIDBuilder.append(siteId).append("/");
+                    }
+                }
+            }
         }
 
-        this.conferenceID =
-            (conferenceIDPrefix != null ? conferenceIDPrefix : "")
-                + conferenceName;
+        conferenceIDBuilder.append(conferenceJid.getLocalpart().toString());
+
+        this.conferenceID = conferenceIDBuilder.toString();
+    }
+
+    /**
+     * Returns the StatsService instance.
+     * @return the StatsService instance.
+     */
+    public StatsService getStatsService()
+    {
+        return this.statsService;
     }
 
     /**
@@ -208,8 +251,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
      */
     public void start()
     {
-        ConferenceInfo conferenceInfo
-            = new ConferenceInfo(this.conferenceID, this.initiatorID);
+        ConferenceInfo conferenceInfo = new ConferenceInfo(this.conferenceID, this.initiatorID, this.initiatorSiteID);
 
         // Send setup event to callstats and on successful response create
         // the userInfo object.
@@ -230,6 +272,8 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                 CallStatsConferenceEvents.CONFERENCE_TERMINATED,
                 userInfo);
         }
+
+        StatsServiceFactory.getInstance().stopStatsService(this.statsService.getId());
     }
 
     /**

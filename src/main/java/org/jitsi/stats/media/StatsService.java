@@ -18,7 +18,7 @@ package org.jitsi.stats.media;
 import io.callstats.sdk.*;
 
 /**
- * Statistics service that is registered as a service inside OSGi.
+ * Statistics service that is created and returned to this lib consumers.
  *
  * @author Damian Minkov
  */
@@ -33,6 +33,11 @@ public class StatsService
      * Callstats instance initialized for this service.
      */
     private final CallStats callStats;
+
+    /**
+     * Whether callstats was initialized.
+     */
+    private boolean initialized = false;
 
     /**
      * Constructs new <tt>StatsService</tt>.
@@ -74,5 +79,23 @@ public class StatsService
         {
             callStats.sendCallStatsBridgeStatusUpdate(stats.build());
         }
+    }
+
+    /**
+     * Whether callstats was initialized.
+     * @return whether callstats was initialized.
+     */
+    boolean isInitialized()
+    {
+        return initialized;
+    }
+
+    /**
+     * Changes initialized value.
+     * @param initialized the new value.
+     */
+    void setInitialized(boolean initialized)
+    {
+        this.initialized = initialized;
     }
 }

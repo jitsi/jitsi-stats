@@ -20,12 +20,13 @@
         <dependency>
             <groupId>io.callstats</groupId>
             <artifactId>callstats-java-sdk</artifactId>
-            <version>5.0.0</version>
+            <version>5.2.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jxmpp/jxmpp-jid -->
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.3.1</version>
+            <groupId>org.jxmpp</groupId>
+            <artifactId>jxmpp-jid</artifactId>
+            <version>0.6.2</version>
         </dependency>
         <!-- org.jitsi -->
         <dependency>
