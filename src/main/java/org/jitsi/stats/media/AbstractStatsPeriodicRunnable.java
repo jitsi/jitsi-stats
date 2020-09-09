@@ -117,7 +117,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                 {
                     String siteId = mucDomain.substring(dotIx + 1);
 
-                    if (!isNotBlank(siteId))
+                    if (isNotBlank(siteId))
                     {
                         this.initiatorSiteID = siteId;
                         conferenceIDBuilder.append(siteId).append("/");
