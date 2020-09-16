@@ -272,8 +272,6 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                 CallStatsConferenceEvents.CONFERENCE_TERMINATED,
                 userInfo);
         }
-
-        StatsServiceFactory.getInstance().stopStatsService(this.statsService.getId());
     }
 
     /**
