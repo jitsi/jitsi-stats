@@ -85,7 +85,7 @@ public class StatsService
      * Whether callstats was initialized.
      * @return whether callstats was initialized.
      */
-    boolean isInitialized()
+    public boolean isInitialized()
     {
         return initialized;
     }

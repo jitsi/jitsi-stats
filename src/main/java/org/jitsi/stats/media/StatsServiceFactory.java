@@ -74,8 +74,9 @@ public class StatsServiceFactory
      * @param isClient The initiator will be reporting client connection (jigasi)
      * not server one (jvb).
      * @param callback  callback to be notified if callstats.io initialized orr failed to do so.
+     * @return returns the created service.
      */
-    public synchronized void createStatsService(
+    public synchronized StatsService createStatsService(
         final Version version,
         final int id,
         String appSecret,
@@ -86,7 +87,7 @@ public class StatsServiceFactory
         final InitCallback callback)
     {
         if (callStatsInstances.containsKey(id))
-            return;
+            return callStatsInstances.get(id);
 
          // prefer keyId/keyPath over appSecret
         if(keyId == null || keyPath == null)
@@ -98,7 +99,7 @@ public class StatsServiceFactory
                 callback.error("Missing parameres", "appSecret missing");
 
                 logger.warn("appSecret missing. Skipping callstats init");
-                return;
+                return null;
             }
         }
 
@@ -110,7 +111,8 @@ public class StatsServiceFactory
         // so it may be better to make the new CallStats instance available to
         // the rest of the statistics service before the method in question
         // returns even if it may fail.
-        callStatsInstances.put(id, new StatsService(id, callStats));
+        StatsService statsService = new StatsService(id, callStats);
+        callStatsInstances.put(id, statsService);
 
         CallStatsInitListener callStatsInitListener =
             new CallStatsInitListener()
@@ -172,6 +174,8 @@ public class StatsServiceFactory
                 serverInfo,
                 callStatsInitListener);
         }
+
+        return statsService;
     }
 
     /**
