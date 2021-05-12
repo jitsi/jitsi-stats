@@ -23,7 +23,7 @@ import org.jose4j.jws.*;
 import org.jose4j.jwt.*;
 import org.jose4j.lang.*;
 
-import org.jitsi.utils.logging.*;
+import org.jitsi.utils.logging2.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -42,7 +42,7 @@ public class TokenGenerator
      * The {@code Logger} used by the {@code TokenGenerator} class and its
      * instances to print debug information.
      */
-    private static final Logger logger = Logger.getLogger(TokenGenerator.class);
+    private static final Logger logger = new LoggerImpl(TokenGenerator.class.getName());
 
     /**
      * The callstats.io appID.
