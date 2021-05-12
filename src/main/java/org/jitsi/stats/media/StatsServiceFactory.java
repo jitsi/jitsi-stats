@@ -19,8 +19,8 @@ import io.callstats.sdk.*;
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.internal.*;
 import io.callstats.sdk.listeners.*;
+import org.jitsi.utils.logging2.*;
 import org.jitsi.utils.version.*;
-import org.jitsi.utils.logging.*;
 
 import java.util.*;
 
@@ -35,8 +35,7 @@ public class StatsServiceFactory
      * The {@code Logger} used by the {@code StatsServiceFactory} class to
      * print debug information.
      */
-    private static final Logger logger
-        = Logger.getLogger(StatsServiceFactory.class);
+    private static final Logger logger = new LoggerImpl(StatsServiceFactory.class.getName());
 
     /**
      * The single instance of this factory.

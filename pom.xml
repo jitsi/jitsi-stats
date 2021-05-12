@@ -32,7 +32,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jitsi-utils</artifactId>
-            <version>1.0-1-gaca0e20</version>
+            <version>1.0-89-g938d2dc</version>
         </dependency>
     </dependencies>
 

@@ -20,7 +20,7 @@ import io.callstats.sdk.*;
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
 import org.jitsi.utils.concurrent.*;
-import org.jitsi.utils.logging.*;
+import org.jitsi.utils.logging2.*;
 import org.jxmpp.jid.*;
 
 import java.lang.ref.*;
@@ -43,8 +43,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     /**
      * The logger.
      */
-    private final static Logger logger
-        = Logger.getLogger(AbstractStatsPeriodicRunnable.class);
+    private final static Logger logger = new LoggerImpl(AbstractStatsPeriodicRunnable.class.getName());
 
     /**
      * The user info object used to identify the reports to callstats. Holds

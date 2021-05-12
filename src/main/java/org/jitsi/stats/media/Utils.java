@@ -15,10 +15,10 @@
  */
 package org.jitsi.stats.media;
 
-import org.jitsi.utils.*;
-
 import java.io.*;
 import java.util.*;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Utility methods for statistics.
@@ -80,23 +80,24 @@ public class Utils
         // Additionally, look for log4j2.xml in the same known locations under
         // SC_HOME_DIR_LOCATION/SC_HOME_DIR_NAME because that is a directory
         // known to Jitsi-derived projects.
-        String scHomeDirName
-            = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_NAME");
+        String scHomeDirName = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_NAME");
 
-        if (!StringUtils.isNullOrEmpty(scHomeDirName))
+        if (!isNullOrEmpty(scHomeDirName))
         {
             String scHomeDirLocation
                 = System.getProperty(
                         "net.java.sip.communicator.SC_HOME_DIR_LOCATION");
 
-            if (!StringUtils.isNullOrEmpty(scHomeDirLocation))
+            if (!isNullOrEmpty(scHomeDirLocation))
             {
                 File dir = new File(scHomeDirLocation, scHomeDirName);
 
                 if (dir.isDirectory())
                 {
                     for (int i = 0, end = files.size(); i < end; ++i)
+                    {
                         files.add(new File(dir, files.get(i).getPath()));
+                    }
                 }
             }
         }
