@@ -110,7 +110,7 @@ public class StatsServiceFactory
         // so it may be better to make the new CallStats instance available to
         // the rest of the statistics service before the method in question
         // returns even if it may fail.
-        StatsService statsService = new StatsService(id, callStats);
+        StatsService statsService = new StatsService(id, callStats, isClient);
         callStatsInstances.put(id, statsService);
 
         CallStatsInitListener callStatsInitListener =
@@ -213,12 +213,6 @@ public class StatsServiceFactory
 
         // the default endpoint type is server (middlebox)
         String endpointType = CallStatsConst.END_POINT_TYPE;
-
-        if (isClient)
-        {
-            endpointType = "browser";
-        }
-
         serverInfo.setEndpointType(endpointType);
 
         return serverInfo;

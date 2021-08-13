@@ -270,6 +270,10 @@ public abstract class AbstractStatsPeriodicRunnable<T>
             this.statsService.getCallStats().sendCallStatsConferenceEvent(
                 CallStatsConferenceEvents.CONFERENCE_TERMINATED,
                 userInfo);
+            if (this.statsService.getIsclient() == true) {
+                this.statsService.getCallStats().stopConferenceAliveSender(
+                    userInfo.getUcID);
+            }
         }
     }
 
@@ -281,6 +285,10 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     private void conferenceSetupResponse(String ucid)
     {
         userInfo = new UserInfo(conferenceID, this.initiatorID, ucid);
+        if (this.statsService.getIsclient() == true) {
+            this.statsService.getCallStats().startConferenceAliveSender(
+                conferenceID, ucid);
+        }
     }
 
     /**
