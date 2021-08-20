@@ -272,7 +272,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                 userInfo);
             if (this.statsService.getIsclient()) {
                 this.statsService.getCallStats().stopConferenceAliveSender(
-                    userInfo.getUcID);
+                    userInfo.getUcID());
             }
         }
     }
@@ -287,7 +287,7 @@ public abstract class AbstractStatsPeriodicRunnable<T>
         userInfo = new UserInfo(conferenceID, this.initiatorID, ucid);
         if (this.statsService.getIsclient()) {
             this.statsService.getCallStats().startConferenceAliveSender(
-                conferenceID, ucid);
+                this.initiatorID, conferenceID, ucid);
         }
     }
 

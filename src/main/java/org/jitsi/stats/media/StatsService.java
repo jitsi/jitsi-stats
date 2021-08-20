@@ -66,7 +66,7 @@ public class StatsService
     {
         this.id = id;
         this.callStats = callStats;
-        this.isclient = isClient;
+        this.isClient = isClient;
     }
 
     /**
