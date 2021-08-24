@@ -40,6 +40,12 @@ public class StatsService
     private boolean initialized = false;
 
     /**
+     * isClient will be reporting client connection (jigasi)
+     * not server one (jvb).
+     */
+    private boolean isClient = false;
+
+    /**
      * Constructs new <tt>StatsService</tt>.
      * @param id the id.
      * @param callStats the callstats instance.
@@ -48,6 +54,19 @@ public class StatsService
     {
         this.id = id;
         this.callStats = callStats;
+    }
+
+    /**
+     * Constructs new <tt>StatsService</tt>.
+     * @param id the id.
+     * @param callStats the callstats instance.
+     * @param isClient the is client flag.
+     */
+    StatsService(int id, CallStats callStats, boolean isClient)
+    {
+        this.id = id;
+        this.callStats = callStats;
+        this.isClient = isClient;
     }
 
     /**
@@ -66,6 +85,15 @@ public class StatsService
     CallStats getCallStats()
     {
         return callStats;
+    }
+
+    /**
+     * Returns the isClient flag.
+     * @return boolean.
+     */
+    boolean getIsclient()
+    {
+        return isClient;
     }
 
     /**

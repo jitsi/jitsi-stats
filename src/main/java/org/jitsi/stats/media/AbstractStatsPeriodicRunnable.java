@@ -185,7 +185,8 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                         .localUserID(this.initiatorID)
                         .remoteUserID(endpointId)
                         .statsType(CallStatsStreamType.INBOUND)
-                        .ucID(userInfo.getUcID());
+                        .ucID(userInfo.getUcID())
+                        .mediaType(receiveStat.mediaType);
 
                 if (receiveStat.jitter_ms != null)
                 {
@@ -223,7 +224,8 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                         .localUserID(this.initiatorID)
                         .remoteUserID(endpointId)
                         .statsType(CallStatsStreamType.OUTBOUND)
-                        .ucID(userInfo.getUcID());
+                        .ucID(userInfo.getUcID())
+                        .mediaType(sendStat.mediaType);
 
                 if (sendStat.jitter_ms != null)
                 {
@@ -270,6 +272,11 @@ public abstract class AbstractStatsPeriodicRunnable<T>
             this.statsService.getCallStats().sendCallStatsConferenceEvent(
                 CallStatsConferenceEvents.CONFERENCE_TERMINATED,
                 userInfo);
+            if (this.statsService.getIsclient()) 
+            {
+                this.statsService.getCallStats().stopConferenceAliveSender(
+                    userInfo.getUcID());
+            }
         }
     }
 
@@ -281,6 +288,11 @@ public abstract class AbstractStatsPeriodicRunnable<T>
     private void conferenceSetupResponse(String ucid)
     {
         userInfo = new UserInfo(conferenceID, this.initiatorID, ucid);
+        if (this.statsService.getIsclient()) 
+        {
+            this.statsService.getCallStats().startConferenceAliveSender(
+                this.initiatorID, conferenceID, ucid);
+        }
     }
 
     /**

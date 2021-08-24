@@ -55,6 +55,11 @@ public class SsrcStats
      */
     public int rtt_ms = -1;
 
+    /**
+     * The media type of the stats.
+     */
+    public String mediaType;
+
     @Override
     public String toString()
     {
