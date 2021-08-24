@@ -185,7 +185,8 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                         .localUserID(this.initiatorID)
                         .remoteUserID(endpointId)
                         .statsType(CallStatsStreamType.INBOUND)
-                        .ucID(userInfo.getUcID());
+                        .ucID(userInfo.getUcID())
+                        .mediaType(receiveStat.mediaType);
 
                 if (receiveStat.jitter_ms != null)
                 {
@@ -223,7 +224,8 @@ public abstract class AbstractStatsPeriodicRunnable<T>
                         .localUserID(this.initiatorID)
                         .remoteUserID(endpointId)
                         .statsType(CallStatsStreamType.OUTBOUND)
-                        .ucID(userInfo.getUcID());
+                        .ucID(userInfo.getUcID())
+                        .mediaType(sendStat.mediaType);
 
                 if (sendStat.jitter_ms != null)
                 {
