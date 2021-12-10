@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.jxmpp</groupId>
             <artifactId>jxmpp-jid</artifactId>
-            <version>1.0.3</version>
+            <version>0.6.2</version>
         </dependency>
         <!-- org.jitsi -->
         <dependency>
