@@ -20,19 +20,19 @@
         <dependency>
             <groupId>io.callstats</groupId>
             <artifactId>callstats-java-sdk</artifactId>
-            <version>5.3.0</version>
+            <version>5.3.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jxmpp/jxmpp-jid -->
         <dependency>
             <groupId>org.jxmpp</groupId>
             <artifactId>jxmpp-jid</artifactId>
-            <version>0.6.2</version>
+            <version>1.0.3</version>
         </dependency>
         <!-- org.jitsi -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jitsi-utils</artifactId>
-            <version>1.0-89-g938d2dc</version>
+            <version>1.0-108-g480acf0</version>
         </dependency>
     </dependencies>
 
