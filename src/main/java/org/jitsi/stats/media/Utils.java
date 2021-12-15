@@ -38,55 +38,28 @@ public class Utils
     public static void getCallStatsJavaSDKSystemPropertyDefaults(
         Map<String, String> defaults)
     {
-        getCallStatsJavaSDKSystemPropertyDefaults(
-            "log4j2.xml",
-            defaults,
-            "log4j.configurationFile");
-        getCallStatsJavaSDKSystemPropertyDefaults(
-            "callstats-java-sdk.properties",
-            defaults,
-            "callstats.configurationFile");
-    }
+        String fileName = "callstats-java-sdk.properties";
+        String propertyName = "callstats.configurationFile";
 
-    /**
-     * Sets the default {@code System} properties on which the
-     * callstats-java-sdk library depends.
-     *
-     * @param fileName the file name to use.
-     * @param defaults the {@code Map} in which the default {@code System}
-     * properties on which the callstats-java-sdk library depends are to be
-     * defined
-     * @param propertyName the property name to set.
-     */
-    private static void getCallStatsJavaSDKSystemPropertyDefaults(
-        String fileName,
-        Map<String, String> defaults,
-        String propertyName)
-    {
-        // There are multiple locations in which we may have put the log4j2.xml
-        // file. The callstats-java-sdk library defaults to config/log4j2.xml in
-        // the current directory. And that is where we keep the file in our
-        // source tree so that works when running from source. Unfortunately,
-        // such a location may not work for us when we run from the .deb
-        // package.
+        // There are multiple locations in which we may have put the callstats config file. The callstats-java-sdk
+        // library defaults to config/callstats-java-sdk.properties in the current directory. And that is where we keep
+        // the file in our source tree so that works when running from source. Unfortunately, such a location may not
+        // work for us when we run from the .deb package.
 
         List<File> files = new ArrayList<>();
 
-        // Look for log4j2.xml in known locations under the current working
-        // directory.
+        // Look for the config file in known locations under the current working directory.
         files.add(new File("config", fileName));
         files.add(new File(fileName));
 
-        // Additionally, look for log4j2.xml in the same known locations under
+        // Additionally, look for the config file in the same known locations under
         // SC_HOME_DIR_LOCATION/SC_HOME_DIR_NAME because that is a directory
         // known to Jitsi-derived projects.
         String scHomeDirName = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_NAME");
 
         if (!isNullOrEmpty(scHomeDirName))
         {
-            String scHomeDirLocation
-                = System.getProperty(
-                        "net.java.sip.communicator.SC_HOME_DIR_LOCATION");
+            String scHomeDirLocation = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_LOCATION");
 
             if (!isNullOrEmpty(scHomeDirLocation))
             {
@@ -102,7 +75,7 @@ public class Utils
             }
         }
 
-        // Pick the first existing log4j2.xml from the candidates defined above.
+        // Pick the first existing config file from the candidates defined above.
         for (File file : files)
         {
             if (file.exists())
