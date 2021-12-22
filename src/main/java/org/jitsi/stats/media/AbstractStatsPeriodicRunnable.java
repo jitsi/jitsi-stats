@@ -19,6 +19,7 @@ import io.callstats.sdk.*;
 
 import io.callstats.sdk.data.*;
 import io.callstats.sdk.listeners.*;
+import org.jetbrains.annotations.*;
 import org.jitsi.utils.concurrent.*;
 import org.jitsi.utils.logging2.*;
 import org.jxmpp.jid.*;
@@ -83,10 +84,10 @@ public abstract class AbstractStatsPeriodicRunnable<T>
      * @param initiatorID the initiator.
      */
     public AbstractStatsPeriodicRunnable(
-        T o,
+        @NotNull T o,
         long period,
         StatsService statsService,
-        EntityBareJid conferenceJid,
+        @NotNull EntityBareJid conferenceJid,
         String conferenceIDPrefix,
         String initiatorID)
     {
