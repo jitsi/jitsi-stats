@@ -17,8 +17,7 @@ package org.jitsi.stats.media;
 
 import java.io.*;
 import java.util.*;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import org.apache.commons.lang3.*;
 
 /**
  * Utility methods for statistics.
@@ -57,11 +56,11 @@ public class Utils
         // known to Jitsi-derived projects.
         String scHomeDirName = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_NAME");
 
-        if (!isNullOrEmpty(scHomeDirName))
+        if (StringUtils.isNotEmpty(scHomeDirName))
         {
             String scHomeDirLocation = System.getProperty("net.java.sip.communicator.SC_HOME_DIR_LOCATION");
 
-            if (!isNullOrEmpty(scHomeDirLocation))
+            if (StringUtils.isNotEmpty(scHomeDirLocation))
             {
                 File dir = new File(scHomeDirLocation, scHomeDirName);
 
